@@ -1,10 +1,10 @@
 <template>
     <div>
-          <span class="title">出发日期<br><i>Set&nbsp;out&nbsp;Date</i></span>
-          <input id="setOutDate" type="text" @focus="isActive=true" v-clickoutside="handleClose"  name="" value="2016-10-01 星期一">
+          <span class="title">{{this.title}}<br><i>{{this.description}}</i></span>
+          <input id="setOutDate" type="text" @focus="isActive=true" :value="selectedDate" v-clickoutside="handleClose"  name="" value="2016-10-01 星期一">
           <i class="date-btn prev"></i>
           <i class="date-btn next"></i>
-          <datepicker :isActive="isActive" ref="reference" ></datepicker>
+          <datepicker :isActive="isActive" ref="reference" @date="changeSelected" ></datepicker>
     </div>
 </template>
 
@@ -13,10 +13,12 @@
   var Clickoutside=require('./utils/clickoutside.js');
   module.exports = {
     name:'datepanel',
+    props:['title','description'],
     data:function(){
          return {
            isActive:false,
-           popperElm:null
+           popperElm:null,
+           selectedDate:''
          };
     },
     mounted:function(){
@@ -27,6 +29,10 @@
     methods:{
     	handleClose:function(){
     		this.isActive=false;
+    	},
+    	changeSelected:function(date){
+    		this.selectedDate=date;
+    		this.handleClose();
     	}
     }
 

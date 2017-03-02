@@ -103,6 +103,13 @@
     //      };
     // },
     methods: {
+    	//在选择框显示选中的时间
+  		selectDate:function(item){
+          if(item== '')return;
+  		  this.selected = this.year +'-'+ (this.month+1 < 10 ? '0'+ (this.month + 1): this.month) +'-' +(item < 10 ? '0' + item : item) ;
+          //组件内选择日期selected/mytoggle发生变更后向外部发送事件通知
+          this.$emit('date', this.selected);
+  		},
         //点击prev按钮
   		prevFn:function(){
           this.month = this.month == 0? 11 : this.month - 1;
