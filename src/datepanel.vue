@@ -4,7 +4,7 @@
           <input id="setOutDate" type="text" @focus="isActive=true" :value="selectedDate" v-clickoutside="handleClose"  name="" value="2016-10-01 星期一">
           <i class="date-btn prev"></i>
           <i class="date-btn next"></i>
-          <datepicker :isActive="isActive" ref="reference" @date="changeSelected" ></datepicker>
+          <datepicker :isActive="isActive" isDoubleCalendar="2" ref="reference" @date="changeSelected" ></datepicker>
     </div>
 </template>
 

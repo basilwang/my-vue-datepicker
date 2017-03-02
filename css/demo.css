@@ -278,6 +278,11 @@ body {
     float: left; }
     .calendar-wrap .calendar-box .calendar:last-child {
       float: right; }
+   .calendar-wrap  .calendar-box:after{
+      display: table;
+      content: '';
+      clear: both;
+  }
   .calendar-wrap table {
     text-align: center; }
     .calendar-wrap table th,

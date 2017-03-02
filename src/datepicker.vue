@@ -8,25 +8,12 @@
   		<i id="next" @click="nextFn()" class="next"></i>
   		<!-- 日历主体 -->
   		<div class="calendar-box">
-  			<div class="calendar">
-  				<!-- 表头 -->
-  				<div class="date-title" v-text="title"></div>
-  				<!-- 表体 -->
-  				<table>
-  					<!-- 星期指示 -->
-  					<thead>
-  						<tr>
-  							<th v-for = "item in weekList"><span>{{item}}</span></th>
-  						</tr>
-  					</thead>
-  					<tbody>
-  						<tr v-for = "list in daysList">
-  							<td v-for = "item in list" @click="selectDate(item)"><span v-if="item != '' ">{{item}}</span></td>
-  						</tr>
-  					</tbody>
-  				</table>
-  			</div>
-		  </div>
+  			<datetable v-for="calendar in calendarList"
+						  :calendar="calendar"
+						  :isSundayFirstDayOfWeek="isSundayFirstDayOfWeek"
+						  :isDoubleCalendar="isDoubleCalendar"
+						 ></datetable>
+		</div>
 	</div> 
     
 </template>
@@ -35,15 +22,15 @@
   var Vue=require('vue');
   module.exports = {
     name:'datepicker',
-    props:['isActive'],
+    components:{datetable:require('./datetable.vue')},
+    props:['isActive','isDoubleCalendar'],
     data: function () {
       var today=new Date();
       return {
          year:today.getFullYear(),
          month:today.getMonth(),
          date:today.getDate(),
-         selected:'',
-         weekList:['日', '一', '二', '三','四','五','六']
+         selected:''
 
       };
     },
@@ -51,50 +38,21 @@
     	isDatePickerActive:function(){
     		return this.isActive
     	},
-    	//只做日历数组
-  			daysList:function() {
-  				//返回每个月的日长
-  				var currentMonthLength = new Date(this.year, this.month + 1, 0).getDate(),
-  					dateObj = [],
-  					dateList = [];
-
-  				//确定当月的第一天是星期几
-        		var startDay = new Date(this.year, this.month, 1).getDay();
-  				//先将当月日期塞入数组中
-  				for (var i = 0; i < currentMonthLength; i++) {
-  					dateObj[i] = i+1
-  				}
-        		
-      		//补全剩余位置
-      		for (var j = 0; j <= 35; j++) {
-      			if(j < startDay){
-      				dateObj = [''].concat(dateObj)
-      			}
-      			if(j > startDay + currentMonthLength){
-      				dateObj = dateObj.concat('')
-      			}
-      		}
-
-      		//以7天为一组从新组合一个二维日期数组
-            var timeStep = Math.ceil(dateObj.length / 7);
-            for(var i = 0; i < timeStep; i++){
-                var stepArr = [];
-                var stepRank = dateObj.length < 7 ? dateObj.length : 7;
-                
-                stepArr = dateObj.splice(0, stepRank);
-                
-                dateList.push(stepArr);
-            }
-            console.log(dateList)
-        		return dateList
-  			},
-  			//表头语言控制
-        title:function(){
-
-            var month = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六',7: '七', 8: '八', 9: '九', 10: '十', 11: '十一', 12: '十二'}[this.month+1]
-             return this.year + '年' + month + '月';
-                 
-          }
+    	calendarList:function(val){
+				// this.slots = []
+				var isDoubleCalendar = this.isDoubleCalendar;
+				var year = this.year;
+				var month = this.month;
+				var months = [];
+				months.push({'year':year,'month':month})
+				for (var i = 1; i < isDoubleCalendar; i++) {			
+					month = month == 11 ? 0 : month + 1,
+					year = month == 0 ? this.year+1 : this.year ;
+					months.push({'year':year,'month':month})
+				}
+				return months;
+			}
+    	
     },
     // mounted:function(){
     //      this.styleSheets={
@@ -103,13 +61,6 @@
     //      };
     // },
     methods: {
-    	//在选择框显示选中的时间
-  		selectDate:function(item){
-          if(item== '')return;
-  		  this.selected = this.year +'-'+ (this.month+1 < 10 ? '0'+ (this.month + 1): this.month) +'-' +(item < 10 ? '0' + item : item) ;
-          //组件内选择日期selected/mytoggle发生变更后向外部发送事件通知
-          this.$emit('date', this.selected);
-  		},
         //点击prev按钮
   		prevFn:function(){
           this.month = this.month == 0? 11 : this.month - 1;
@@ -126,7 +77,7 @@
   		  if(this.month == 0){
   			this.year = this.year + 1
   		  }
-  		},
+  		}
     }
   };
 </script>
