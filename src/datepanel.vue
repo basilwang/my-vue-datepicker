@@ -1,42 +1,32 @@
 <template>
   <div>
-    <span class="title">{{this.title}}<br><i>{{this.description}}</i></span>
-    <input id="setOutDate" type="text" @focus="isActive=true" :value="selectedDate" v-clickoutside="handleClose" name="" value="2016-10-01 星期一">
+    <span class="title">{{title}}<br><i>{{desc}}</i></span>
+    <input id="setOutDate" @focus="isActive=true" type="text" name="" :value="selected">
     <i class="date-btn prev"></i>
     <i class="date-btn next"></i>
-    <datepicker :isActive="isActive" isDoubleCalendar="2" ref="reference" @date="changeSelected"></datepicker>
+    <datepicker :isActive="isActive" @date="selectDate"></datepicker>
   </div>
 </template>
 <script>
-var Vue = require('vue');
-var Clickoutside = require('./utils/clickoutside.js');
+var datepicker = require('./datepicker.vue');
 module.exports = {
   name: 'datepanel',
-  props: ['title', 'description'],
+  props: ['title', 'desc'],
+  methods: {
+    selectDate: function (date) {
+      console.log('在父组件接受的值' + date);
+      this.selected = date;
+      this.isActive = false;
+    }
+  },
   data: function () {
     return {
       isActive: false,
-      popperElm: null,
-      selectedDate: ''
+      selected: ''
     };
   },
-  mounted: function () {
-    this.popperElm = this.$refs.reference.$el;
-  },
   components: {
-    datepicker: require('./datepicker.vue')
-  },
-  directives: {
-    Clickoutside
-  },
-  methods: {
-    handleClose: function () {
-      this.isActive = false;
-    },
-    changeSelected: function (date) {
-      this.selectedDate = date;
-      this.handleClose();
-    }
+    datepicker: datepicker
   }
 };
 </script>
